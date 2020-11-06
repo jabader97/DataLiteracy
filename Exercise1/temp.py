@@ -22,6 +22,9 @@ url = "https://www.arcgis.com/sharing/rest/content/items/f10774f1c63e40168479a1f
 
 # Read CSV data from URL
 data_rki = pd.read_csv('RKI_COVID19_small.csv')
+# reformat the date for ease of use later
+data_rki["Date"] = pd.to_datetime(data_rki["Meldedatum"])
+data_rki['dates'] = data_rki['Date'].dt.date
 
 # Inspect first few rows of the data
 
@@ -42,18 +45,18 @@ population_sizes = {"Germany": 83783942,
                    "Baden-Württemberg": 11023424,
                    "Tübingen": 228678}
 
-total_by_day = data_rki.groupby(['Meldedatum']).agg({'NeuerFall': sum}).values
-total_by_day_tue = tuebingen.groupby(['Meldedatum']).agg({'NeuerFall': sum}).values
-total_by_day_bw = bw.groupby(['Meldedatum']).agg({'NeuerFall': sum}).values
-# print(total_by_day)
+total_by_day = data_rki.groupby(['dates']).agg({'NeuerFall': sum}).values
+dates = data_rki.groupby(['dates']).agg({'NeuerFall': sum}).NeuerFall
+total_by_day_tue = tuebingen.groupby(['dates']).agg({'NeuerFall': sum}).values
+dates_tue = tuebingen.groupby(['dates']).agg({'NeuerFall': sum}).NeuerFall
+total_by_day_bw = bw.groupby(['dates']).agg({'NeuerFall': sum}).values
+dates_bw = bw.groupby(['dates']).agg({'NeuerFall': sum}).NeuerFall
 
 # Germany
-# TODO fix dates
-dif_by_day = []
-dates = []
+dif_by_day = [0]
 for i in range(1, total_by_day.size):
     dif_by_day.append(total_by_day[i] - total_by_day[i - 1])
-plt.plot(dif_by_day)
+plt.plot(dates._index, dif_by_day)
 plt.xticks(rotation=90)
 plt.show()
 plt.clf()
@@ -61,22 +64,22 @@ plt.clf()
 
 # Baden Württemberg
 # todo fix this
-dif_by_day_bw = []
+dif_by_day_bw = [0]
 dates = []
 for i in range(1, total_by_day_bw.size):
-    dif_by_day.append(total_by_day_bw[i] - total_by_day_bw[i - 1])
-plt.plot(dif_by_day_bw)
+    dif_by_day_bw.append(total_by_day_bw[i] - total_by_day_bw[i - 1])
+plt.plot(dates_bw._index, dif_by_day_bw)
 plt.xticks(rotation=90)
 plt.show()
 plt.clf()
 
 # Tübingen
 # todo fix this
-dif_by_day_tue = []
+dif_by_day_tue = [0]
 dates = []
 for i in range(1, total_by_day_tue.size):
     dif_by_day_tue.append(total_by_day_tue[i] - total_by_day_tue[i - 1])
-plt.plot(dif_by_day_tue)
+plt.plot(dates_tue._index, dif_by_day_tue)
 plt.xticks(rotation=90)
 plt.show()
 plt.clf()
