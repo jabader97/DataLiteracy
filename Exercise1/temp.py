@@ -63,7 +63,6 @@ plt.clf()
 
 
 # Baden Württemberg
-# todo fix this
 dif_by_day_bw = [0]
 dates = []
 for i in range(1, total_by_day_bw.size):
@@ -74,7 +73,6 @@ plt.show()
 plt.clf()
 
 # Tübingen
-# todo fix this
 dif_by_day_tue = [0]
 dates = []
 for i in range(1, total_by_day_tue.size):
@@ -91,13 +89,13 @@ fig, axs = plt.subplots(1, 3, figsize=(12, 3.5))
 data_rki_cases = None
 
 # Compute number of new cases in last four days and in four days prior to that
-
+# TODO basic reproduction number
 
 # Estimate the basic reproduction number R0
 
 
 # Show data from the previous week
-display(data_rki_cases.tail())
+# display(data_rki_cases.tail()) # todo add this back in
 
 # Plot timeseries
 fig, axs = plt.subplots(1, 1, figsize=(10, 3.5))
@@ -108,9 +106,11 @@ fig, axs = plt.subplots(1, 1, figsize=(10, 3.5))
 url = "https://covid.ourworldindata.org/data/owid-covid-data.csv"
 
 # Read CSV data from URL
-data_owid = None
+data_owid = pd.read_csv('owid-covid-data.csv')
 
 # Parse data
+data_owid["Date"] = pd.to_datetime(data_owid["date"])
+data_owid['dates'] = data_owid['Date'].dt.date
 
 
 # Inspect dataframe and datatypes
@@ -119,12 +119,17 @@ data_owid = None
 cois = ["DEU", "GBR", "USA", "FRA", "NLD"]
 
 # Subset worldwide data with CoIs
-
+only_cois = data_owid.iso_code.isin(cois)
+only_cois = data_owid[only_cois]
 
 # Create CFR column
+only_cois['case_fatality_rate'] = only_cois['total_deaths'] / only_cois['total_cases']
+only_cois['positive_rate'] = only_cois['total_tests'] / only_cois['total_cases']
 
 
 # Remove unnecessary columns
+only_cois = only_cois[['iso_code', 'dates', 'new_cases', 'new_cases_per_million', 'new_cases_smoothed_per_million',
+                       'case_fatality_rate', 'positive_rate']]
 
 data_owid.head()
 
