@@ -57,6 +57,9 @@ dif_by_day = [0]
 for i in range(1, total_by_day.size):
     dif_by_day.append(total_by_day[i] - total_by_day[i - 1])
 plt.plot(dates._index, dif_by_day)
+plt.xlabel('date')
+plt.ylabel('difference between day at i and day at i - 1')
+plt.title('Difference between given day and the previous in Germany')
 plt.xticks(rotation=90)
 plt.show()
 plt.clf()
@@ -68,6 +71,9 @@ dates = []
 for i in range(1, total_by_day_bw.size):
     dif_by_day_bw.append(total_by_day_bw[i] - total_by_day_bw[i - 1])
 plt.plot(dates_bw._index, dif_by_day_bw)
+plt.xlabel('date')
+plt.ylabel('difference between day at i and day at i - 1')
+plt.title('Difference between given day and the previous in Baden-Württemberg')
 plt.xticks(rotation=90)
 plt.show()
 plt.clf()
@@ -78,12 +84,15 @@ dates = []
 for i in range(1, total_by_day_tue.size):
     dif_by_day_tue.append(total_by_day_tue[i] - total_by_day_tue[i - 1])
 plt.plot(dates_tue._index, dif_by_day_tue)
+plt.xlabel('date')
+plt.ylabel('difference between day at i and day at i - 1')
+plt.title('Difference between given day and the previous in Tübingen')
 plt.xticks(rotation=90)
 plt.show()
 plt.clf()
 
 # Plot timeseries
-fig, axs = plt.subplots(1, 3, figsize=(12, 3.5))
+# fig, axs = plt.subplots(1, 3, figsize=(12, 3.5)) # todo fix this
 
 # Create dataframe of number of new cases
 data_rki_cases = None
@@ -98,7 +107,7 @@ data_rki_cases = None
 # display(data_rki_cases.tail()) # todo add this back in
 
 # Plot timeseries
-fig, axs = plt.subplots(1, 1, figsize=(10, 3.5))
+# fig, axs = plt.subplots(1, 1, figsize=(10, 3.5))  # todo fix this
 
 # Plot reproduction rate
 
@@ -133,21 +142,39 @@ only_cois = only_cois[['iso_code', 'dates', 'new_cases', 'new_cases_per_million'
 
 data_owid.head()
 
-fig, axs = plt.subplots(1, 3, figsize=(10, 3.5))
+# fig, axs = plt.subplots(1, 3, figsize= # todo fix this
 
 # Plotting colors
 colors = dict(zip(cois, ["C0", "C1", "C2", "C3", "C4"]))
+color_order = only_cois.replace({"iso_code": colors}).iso_code
 
 # New Cases
-
+# todo add legend?
+# todo make a plot, not scatter?
+plt.title("Number of new COVID cases by date")
+plt.xlabel('dates')
+plt.ylabel('number of new cases')
+plt.scatter(only_cois.dates, only_cois.new_cases, color=color_order)
+plt.xticks(rotation=90)
+plt.show()
 
 # Case fatality rate
-
+plt.title("Fatality rate by date")
+plt.xlabel('dates')
+plt.ylabel('fatality rate')
+plt.scatter(only_cois.case_fatality_rate, only_cois.new_cases, color=color_order)
+plt.xticks(rotation=90)
+plt.show()
 
 # Rate of positive tests
+# todo fix this
+plt.title("Positive test rate by date")
+plt.xlabel('dates')
+plt.ylabel('positive test rate')
+plt.yscale("log")
+plt.scatter(only_cois.positive_rate, only_cois.new_cases, color=color_order)
+plt.xticks(rotation=90)
+plt.show()
 
 
-# Date formatting
-
-
-fig.tight_layout(w_pad=0.1)
+# fig.tight_layout(w_pad=0.1) # todo fix this?
