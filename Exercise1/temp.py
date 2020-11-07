@@ -21,7 +21,8 @@ set_matplotlib_formats("pdf", "svg")
 url = "https://www.arcgis.com/sharing/rest/content/items/f10774f1c63e40168479a1feb6c7ca74/data"
 
 # Read CSV data from URL
-data_rki = pd.read_csv('RKI_COVID19_small.csv')
+# data_rki = pd.read_csv('RKI_COVID19_small.csv')
+data_rki = pd.read_csv(url)
 # reformat the date for ease of use later
 data_rki["Date"] = pd.to_datetime(data_rki["Meldedatum"])
 data_rki['dates'] = data_rki['Date'].dt.date
@@ -58,7 +59,7 @@ fig, axs = plt.subplots(1, 3, figsize=(12, 3.5))
 # Germany
 dif_by_day = [0]
 for i in range(1, total_by_day.size):
-    dif_by_day.append(total_by_day[i] - total_by_day[i - 1])
+    dif_by_day.append((total_by_day[i] - total_by_day[i - 1]) / population_sizes["Germany"])
 # fig(1, 3, 1)
 axs[0].plot(dates._index, dif_by_day)
 
@@ -67,14 +68,14 @@ axs[0].plot(dates._index, dif_by_day)
 dif_by_day_bw = [0]
 dates = []
 for i in range(1, total_by_day_bw.size):
-    dif_by_day_bw.append(total_by_day_bw[i] - total_by_day_bw[i - 1])
+    dif_by_day_bw.append((total_by_day_bw[i] - total_by_day_bw[i - 1]) / population_sizes["Baden-Württemberg"])
 axs[1].plot(dates_bw._index, dif_by_day_bw)
 
 # Tübingen
 dif_by_day_tue = [0]
 dates = []
 for i in range(1, total_by_day_tue.size):
-    dif_by_day_tue.append(total_by_day_tue[i] - total_by_day_tue[i - 1])
+    dif_by_day_tue.append((total_by_day_tue[i] - total_by_day_tue[i - 1]) / population_sizes["Tübingen"])
 axs[2].plot(dates_tue._index, dif_by_day_tue)
 plt.show()
 
